@@ -1,12 +1,12 @@
+import { Transaction, TransactionSummary, TransactionType, User } from '@/types';
 import * as SQLite from 'expo-sqlite';
-import { Transaction, TransactionSummary, User, TransactionType } from '@/types';
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
 
 // Default seeded users for quick testing & grading
 const INITIAL_USERS = [
-  { id: 'u_user1', username: 'user1', password: 'password123', fullName: 'Alex Johnson' },
-  { id: 'u_user2', username: 'user2', password: 'password123', fullName: 'Sarah Miller' },
+  { id: 'u_user1', username: 'user1', password: 'password123', fullName: 'An' },
+  { id: 'u_user2', username: 'user2', password: 'password123', fullName: 'An2' },
   { id: 'u_admin', username: 'admin', password: 'admin123', fullName: 'Administrator' },
 ];
 
