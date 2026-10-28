@@ -10,6 +10,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string, fullName: string) => Promise<void>;
+  updateSession: (updatedData: Partial<User>) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -73,6 +74,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(newUser);
   };
 
+  const updateSession = async (updatedData: Partial<User>) => {
+    if (!user) return;
+    const updatedUser: User = { ...user, ...updatedData };
+    // Ghi đè session mới vào AsyncStorage
+    await AsyncStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(updatedUser));
+    // Cập nhật React state để toàn app nhận thông tin mới ngay lập tức
+    setUser(updatedUser);
+  };
+
   const logout = async () => {
     try {
       await AsyncStorage.removeItem(SESSION_STORAGE_KEY);
@@ -84,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, updateSession, logout }}>
       {children}
     </AuthContext.Provider>
   );
