@@ -18,6 +18,7 @@ interface TransactionFilters {
 
 interface TransactionContextType {
   transactions: Transaction[];
+  allTransactions: Transaction[];
   summary: TransactionSummary;
   isLoading: boolean;
   filters: TransactionFilters;
@@ -56,6 +57,7 @@ const TransactionContext = createContext<TransactionContextType | undefined>(und
 export function TransactionProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [summary, setSummary] = useState<TransactionSummary>(defaultSummary);
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -67,17 +69,20 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
   const loadData = useCallback(async () => {
     if (!user) {
       setTransactions([]);
+      setAllTransactions([]);
       setSummary(defaultSummary);
       return;
     }
 
     setIsLoading(true);
     try {
-      const [txList, sum] = await Promise.all([
+      const [filteredTx, allTx, sum] = await Promise.all([
         getUserTransactions(user.id, filters.search, filters.type, filters.category),
+        getUserTransactions(user.id),
         getUserSummary(user.id),
       ]);
-      setTransactions(txList);
+      setTransactions(filteredTx);
+      setAllTransactions(allTx);
       setSummary(sum);
     } catch (error) {
       console.error('Failed to load transaction data:', error);
@@ -162,6 +167,7 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
     <TransactionContext.Provider
       value={{
         transactions,
+        allTransactions,
         summary,
         isLoading,
         filters,

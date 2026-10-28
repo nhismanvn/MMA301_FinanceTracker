@@ -17,10 +17,10 @@ import { formatCurrency, formatDate, getCategoryDetails } from '@/utils/format';
 
 export default function DashboardScreen() {
   const { user } = useAuth();
-  const { summary, transactions, isLoading, refresh } = useTransactions();
+  const { summary, allTransactions, isLoading, refresh } = useTransactions();
 
-  // Get 5 latest transactions
-  const recentTransactions = transactions.slice(0, 5);
+  // Get 5 latest transactions regardless of active filters on transactions tab
+  const recentTransactions = allTransactions.slice(0, 5);
 
   const formattedDate = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
@@ -118,7 +118,7 @@ export default function DashboardScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
           <TouchableOpacity onPress={() => router.push('/(tabs)/transactions')}>
-            <Text style={styles.seeAllText}>See All ({transactions.length})</Text>
+            <Text style={styles.seeAllText}>See All ({allTransactions.length})</Text>
           </TouchableOpacity>
         </View>
 
